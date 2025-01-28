@@ -9,9 +9,9 @@ import sys
 def login():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
-        juego_json = request.json
-        username = juego_json['username']
-        password = juego_json['password']
+        sala_json = request.json
+        username = sala_json['username']
+        password = sala_json['password']
         try:
             conexion = obtener_conexion()
             with conexion.cursor() as cursor:
@@ -39,10 +39,10 @@ def login():
 def registro():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
-        juego_json = request.json
-        username = juego_json['username']
-        password = juego_json['password']
-        perfil = juego_json['profile']
+        sala_json = request.json
+        username = sala_json['username']
+        password = sala_json['password']
+        perfil = sala_json['profile']
         try:
             conexion = obtener_conexion()
             with conexion.cursor() as cursor:

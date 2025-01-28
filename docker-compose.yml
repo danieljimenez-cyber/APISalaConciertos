@@ -11,7 +11,7 @@ services:
       MARIADB_DATABASE: PEPS
     volumes:
       - ./mariadb_data:/var/lib/mysql
-      - ./Juegos.sql://docker-entrypoint-initdb.d/Juegos.sql
+      - ./Salas.sql://docker-entrypoint-initdb.d/Salas.sql
     user: mysql
     ports:
       - 3306:3306
