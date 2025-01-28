@@ -20,7 +20,7 @@
                         <td>${concierto.descripcion}</td>
                         <td>${concierto.precio}</td>
                         <td>
-                            <a href="/api/editar_concierto.html?id=${concierto.id}" class="button is-info">Editar</a>
+                            <a href="/static/editar_concierto.html?id=${concierto.id}" class="button is-info">Editar</a>
                         </td>
                         <td>
                             <button class="button is-danger" onclick="eliminarconcierto(${concierto.id})">Eliminar</button>
@@ -75,7 +75,7 @@
                 .then(response => response.json())
                 .then(result => {
                     if (result.status == "OK"){
-                        location.href="/api/index.html";
+                        location.href="/static/index.html";
                     } else {
                         alert("No se ha podido cerrar sesión")
                     }
@@ -100,8 +100,8 @@
         </div>
         <div class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="/api/conciertos.html">conciertos</a>
-                <a class="navbar-item" href="/api/subida.html">Archivos</a>
+                <a class="navbar-item" href="/static/conciertos.html">conciertos</a>
+                <a class="navbar-item" href="/static/subida.html">Archivos</a>
                 <a class="navbar-item" href="javascript:cerrarSesion()">Cerrar sesion</a>
             </div>
             <div class="navbar-end">
@@ -114,7 +114,7 @@
         <div class="columns">
             <div class="column">
                 <h3 class="is-size-3">Conciertos</h3>
-                <a href="/api/agregar_concierto.html" class="button is-success">Agregar</a>
+                <a href="/static/agregar_concierto.html" class="button is-success">Agregar</a>
                 <table class="table">
                     <thead>
                         <tr>
