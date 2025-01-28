@@ -9,64 +9,37 @@
     <script>
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        var queryString = window.location.search;
-        var urlParams = new URLSearchParams(queryString);
-        var id = urlParams.get('id');
-        onload=function(){
-            obtenerDatosJuego(id);
-        }
-        function obtenerDatosJuego(id){
-            var requestOptions = {
-                method: 'GET'
-            };
 
-            fetch("/juego/"+id, requestOptions)
-                .then(response => response.json())
-                .then(result => pintarJuego(result))
-                .catch(error => {
-                    console.log('error', error)
-                    alert("Ha habido un error al recuperar los datos del juego");
-                    location.href="/static/juegos.html";
-                });
-
-        }
-        function pintarJuego(juego){
-            document.getElementById("nombre").value=juego.nombre;
-            descripcion=document.getElementById("descripcion").value=juego.descripcion;
-            precio=document.getElementById("precio").value=juego.precio;
-            document.getElementById("foto").value=juego.foto;
-        }
-        function guardar(){            
+        function guardar(){
             let nombre=document.getElementById("nombre").value;
             let descripcion=document.getElementById("descripcion").value;
             let precio=document.getElementById("precio").value;
             let foto=document.getElementById("foto").value;
             let datos=JSON.stringify({
-                "id":id,
                 "nombre":nombre,
                 "descripcion":descripcion,
                 "precio": precio,
                 "foto":foto
             });
             var requestOptions = {
-                method: 'PUT',
+                method: 'POST',
                 headers: myHeaders,
                 body: datos
             };
 
-            fetch("/juegos", requestOptions)
+            fetch("/conciertos", requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     if (result.status == "OK"){
-                        alert("Juego modificado")
-                        location.href="/static/juegos.html"
+                        alert("Concierto guardado")
+                        location.href="/static/conciertos.html"
                     } else {
-                        alert("El juego no ha podido ser modificado")
+                        alert("El concierto no ha podido ser guardado")
                     }
                 })
                 .catch(error => {
                     console.log('error', error);
-                    alert("Se ha producido un error y el juego no ha podido ser modificado")
+                    alert("Se ha producido un error y el concierto no ha podido ser guardado")
                 });
         }
     </script>
@@ -83,7 +56,7 @@
         </div>
         <div class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="/static/juegos">Juegos</a>
+                <a class="navbar-item" href="/static/conciertos">Conciertos</a>
             </div>
             <div class="navbar-end">
                 <div class="navbar-item">
@@ -94,7 +67,7 @@
   <section class="section">
     <div class="columns">
         <div class="column">
-            <h3 class="is-size-3">Editar juego</h3>
+            <h3 class="is-size-3">Agregar concierto</h3>
                 <label for="nombre">Nombre:</label>
                 <input required type="text" class="input" placeholder="Nombre" name="nombre" id="nombre">
                 <label for="descripcion">Descripción</label>
@@ -104,7 +77,7 @@
                 <label for="foto">Foto</label>
                 <input required type="text" class="input" placeholder="Foto" name="foto" id="foto">
                 <button type="button" onclick="guardar()" class="button is-success mt-2">Guardar</button>
-                <a href="/static/juego.html" class="button is-primary mt-2">Volver</a>
+                <a href="/static/conciertos.html" class="button is-primary mt-2">Volver</a>
             </form>
         </div>
     </div>
