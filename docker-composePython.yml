@@ -7,10 +7,12 @@ services:
     ports:
       - 7777:80 # Puerto público para Apache
     volumes:
-      - ./WEB/static:/usr/local/apache2/htdocs/ # Sirve tu cliente desde la carpeta 'static'
+      - ./web/static:/usr/local/apache2/htdocs/static # Sirve la carpeta 'static' desde el contenedor de Python
       - ./config/demo.apache.conf:/usr/local/apache2/conf/httpd.conf # Archivo de configuración de Apache
     depends_on:
       - python
+    networks:
+      - internal
 
   mariadb:
     image: mariadb:latest
