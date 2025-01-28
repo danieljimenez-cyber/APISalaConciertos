@@ -2,6 +2,7 @@ from __future__ import print_function
 from bd import obtener_conexion
 import sys
 
+# CRUD : CREATE
 def insertar_juego(nombre, descripcion, precio,foto):
     try:
         conexion = obtener_conexion()
@@ -30,7 +31,8 @@ def convertir_juego_a_json(juego):
     d['foto'] = juego[4]
     return d
 
-def obtener_juegos():
+#  CRUD : READ 
+def obtener_juegos(): 
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
@@ -65,7 +67,7 @@ def obtener_juego_por_id(id):
         code=500
     return juegojson,code
 
-
+# CRUD : DELETE
 def eliminar_juego(id):
     try:
         conexion = obtener_conexion()
@@ -84,6 +86,7 @@ def eliminar_juego(id):
         code=500
     return ret,code
 
+# CRUD : UPDATE
 def actualizar_juego(id, nombre, descripcion, precio, foto):
     try:
         conexion = obtener_conexion()
