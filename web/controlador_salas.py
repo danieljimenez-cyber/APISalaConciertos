@@ -2,7 +2,7 @@ from __future__ import print_function
 from bd import obtener_conexion
 import sys
 
- def calculariva(precio):
+def calculariva(precio):
         iva = precio*0.21
         precio_con_iva = precio + iva 
         return precio_con_iva

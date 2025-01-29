@@ -11,8 +11,8 @@ services:
       MARIADB_DATABASE: PEPS
     volumes:
       - ./mariadb_data:/var/lib/mysql
-      - ./Salas.sql://docker-entrypoint-initdb.d/Salas.sql
-
+      - ./Salas.sql:/docker-entrypoint-initdb.d/Salas.sql 
+    
     user: mysql
   phpmyadmin:
     image: phpmyadmin
