@@ -2,9 +2,15 @@ from __future__ import print_function
 from bd import obtener_conexion
 import sys
 
+ def calculariva(precio):
+        iva = precio*0.21
+        precio_con_iva = precio + iva 
+        return precio_con_iva
+
 # CRUD : CREATE
 def insertar_sala(nombre, descripcion, precio,foto):
     try:
+        precio = calcular_iva(precio)
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
             cursor.execute("INSERT INTO salas(nombre, descripcion, precio,foto) VALUES (%s, %s, %s,%s)",
@@ -24,11 +30,11 @@ def insertar_sala(nombre, descripcion, precio,foto):
 
 def convertir_sala_a_json(juego):
     d = {}
-    d['id'] = juego[0]
-    d['nombre'] = juego[1]
-    d['descripcion'] = juego[2]
-    d['precio'] = juego[3]
-    d['foto'] = juego[4]
+    d['id'] = sala[0]
+    d['nombre'] = sala[1]
+    d['descripcion'] = sala[2]
+    d['precio'] = sala[3]
+    d['foto'] = sala[4]
     return d
 
 #  CRUD : READ 
@@ -89,6 +95,7 @@ def eliminar_sala(id):
 # CRUD : UPDATE
 def actualizar_sala(id, nombre, descripcion, precio, foto):
     try:
+        precio = calcular_iva(precio)
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
             cursor.execute("UPDATE salas SET nombre = %s, descripcion = %s, precio = %s, foto=%s WHERE id = %s",
@@ -105,3 +112,4 @@ def actualizar_sala(id, nombre, descripcion, precio, foto):
         ret = {"status": "Failure" }
         code=500
     return ret,code
+
