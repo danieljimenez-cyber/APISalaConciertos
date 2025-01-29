@@ -28,7 +28,7 @@ def insertar_sala(nombre, descripcion, precio,foto):
         code=500
     return ret,code
 
-def convertir_sala_a_json(juego):
+def convertir_sala_a_json(sala):
     d = {}
     d['id'] = sala[0]
     d['nombre'] = sala[1]
