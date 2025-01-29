@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>EJEMPLO APP WEB CON CRUD</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+        <script>
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            var queryString = window.location.search;
+            var urlParams = new URLSearchParams(queryString);
+            var id = urlParams.get('id');
+            onload=function(){
+                obtenerDatosSala(id);
+            }
+            function obtenerDatosSala(id){
+                var requestOptions = {
+                    method: 'GET'
+                };
+                fetch("/sala/"+id, requestOptions)
+                    .then(response => response.json())
+                    .then(result => pintarsala(result))
+                    .catch(error => {
+                        console.log('error', error)
+                        alert("Ha habido un error al recuperar los datos del sala");
+                        location.href="/static/salas.html";
+                    });
+            }
+            function pintarSala(sala){
+                document.getElementById("nombre").value=sala.nombre;
+                descripcion=document.getElementById("descripcion").value=sala.descripcion;
+                precio=document.getElementById("precio").value=sala.precio;
+                document.getElementById("foto").value=sala.foto;
+            }
+            function guardar(){            
+                let nombre=document.getElementById("nombre").value;
+                let descripcion=document.getElementById("descripcion").value;
+                let precio=document.getElementById("precio").value;
+                let foto=document.getElementById("foto").value;
+                let datos=JSON.stringify({
+                    "id":id,
+                    "nombre":nombre,
+                    "descripcion":descripcion,
+                    "precio": precio,
+                    "foto":foto
+                });
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: datos
+                };
+                fetch("/salas", requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status == "OK"){
+                            alert("Sala modificado")
+                            location.href="/static/salas.html"
+                        } else {
+                            alert("La sala no ha podido ser modificado")
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                        alert("Se ha producido un error y la sala no ha podido ser modificado")
+                    });
+            }
+            function cerrarSesion(){
+                var requestOptions = {
+                    method: 'GET'
+                };
+                fetch("/logout", requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status == "OK"){
+                            location.href="/static/index.html";
+                        } else {
+                            alert("No se ha podido cerrar sesión")
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                        alert("Se ha producido un error y no se ha podido cerrar sesión")
+                    });
+            }
+        </script>
+    </head>
+    <body>
+        <nav class="navbar is-warning" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <button class="navbar-burger is-warning button" aria-label="menu" aria-expanded="false"
+                    data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-start">
+                    <a class="navbar-item" href="/static/salas.html">Salas</a>
+                    <a class="navbar-item" href="/static/subida.html">Archivos</a>
+                    <a class="navbar-item" href="javascript:cerrarSesion()">Cerrar sesion</a>
+                </div>
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                    </div>
+                </div>
+            </div>
+        </nav>
+    <section class="section">
+        <div class="columns">
+            <div class="column">
+                <h3 class="is-size-3">Editar sala</h3>
+                <form>
+                    <label for="nombre">Nombre:</label>
+                    <input required type="text" class="input" placeholder="Nombre" name="nombre" id="nombre">
+                    <label for="descripcion">Descripción</label>
+                    <input required type="text" class="input" placeholder="Descripción" name="descripcion" id="descripcion">
+                    <label for="precio">Precio</label>
+                    <input required type="number" class="input" placeholder="Precio" name="precio" id="precio">
+                    <label for="foto">Foto</label>
+                    <input required type="text" class="input" placeholder="Foto" name="foto" id="foto">
+                    <button type="button" onclick="guardar()" class="button is-success mt-2">Guardar</button>
+                    <a href="/static/salas.html" class="button is-primary mt-2">Volver</a>
+                </form>
+            </div>
+        </div>
+    </section>
+    </body>
+</html>
