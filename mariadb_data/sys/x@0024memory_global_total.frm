@@ -7,10 +7,18 @@ definer_user=mariadb.sys
 definer_host=localhost
 suid=0
 with_check_option=0
+<<<<<<< HEAD
 timestamp=0001738063272464936
+=======
+timestamp=0001738065051947478
+>>>>>>> main
 create-version=2
 source=SELECT SUM(CURRENT_NUMBER_OF_BYTES_USED) total_allocated\n  FROM performance_schema.memory_summary_global_by_event_name;
 client_cs_name=utf8mb3
 connection_cl_name=utf8mb3_general_ci
 view_body_utf8=select sum(`performance_schema`.`memory_summary_global_by_event_name`.`CURRENT_NUMBER_OF_BYTES_USED`) AS `total_allocated` from `performance_schema`.`memory_summary_global_by_event_name`
+<<<<<<< HEAD
 mariadb-version=110502
+=======
+mariadb-version=110602
+>>>>>>> main

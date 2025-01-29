@@ -3,11 +3,11 @@ from bd import obtener_conexion
 import sys
 
 # CRUD : CREATE
-def insertar_juego(nombre, descripcion, precio,foto):
+def insertar_sala(nombre, descripcion, precio,foto):
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
-            cursor.execute("INSERT INTO juegos(nombre, descripcion, precio,foto) VALUES (%s, %s, %s,%s)",
+            cursor.execute("INSERT INTO salas(nombre, descripcion, precio,foto) VALUES (%s, %s, %s,%s)",
                        (nombre, descripcion, precio,foto))
             if cursor.rowcount == 1:
                 ret={"status": "OK" }
@@ -17,12 +17,12 @@ def insertar_juego(nombre, descripcion, precio,foto):
         conexion.commit()
         conexion.close()
     except:
-        print("Excepcion al insertar un juego", file=sys.stdout)
+        print("Excepcion al insertar una sala de conciertos", file=sys.stdout)
         ret = {"status": "Failure" }
         code=500
     return ret,code
 
-def convertir_juego_a_json(juego):
+def convertir_sala_a_json(juego):
     d = {}
     d['id'] = juego[0]
     d['nombre'] = juego[1]
@@ -32,47 +32,47 @@ def convertir_juego_a_json(juego):
     return d
 
 #  CRUD : READ 
-def obtener_juegos(): 
+def obtener_salas(): 
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM juegos")
-            juegos = cursor.fetchall()
-            juegosjson=[]
-            if juegos:
-                for juego in juegos:
-                    juegosjson.append(convertir_juego_a_json(juego))
+            cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM salas")
+            salas = cursor.fetchall()
+            salasjson=[]
+            if salas:
+                for sala in salas:
+                    salasjson.append(convertir_sala_a_json(sala))
         conexion.close()
         code=200
     except:
-        print("Excepcion al obtener los juegos", file=sys.stdout)
-        juegosjson=[]
+        print("Excepcion al obtener las salas de concierto", file=sys.stdout)
+        salasjson=[]
         code=500
-    return juegosjson,code
+    return salasjson,code
 
-def obtener_juego_por_id(id):
-    juegojson = {}
+def obtener_sala_por_id(id):
+    salajson = {}
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
-            #cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM juegos WHERE id = %s", (id,))
-            cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM juegos WHERE id =" + id)
-            juego = cursor.fetchone()
-            if juego is not None:
-                juegojson = convertir_juego_a_json(juego)
+            #cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM salas WHERE id = %s", (id,))
+            cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM salas WHERE id =" + id)
+            sala = cursor.fetchone()
+            if sala is not None:
+                salajson = convertir_sala_a_json(sala)
         conexion.close()
         code=200
     except:
-        print("Excepcion al recuperar un juego", file=sys.stdout)
+        print("Excepcion al recuperar una sala de concierto", file=sys.stdout)
         code=500
-    return juegojson,code
+    return salajson,code
 
 # CRUD : DELETE
-def eliminar_juego(id):
+def eliminar_sala(id):
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
-            cursor.execute("DELETE FROM juegos WHERE id = %s", (id,))
+            cursor.execute("DELETE FROM salas WHERE id = %s", (id,))
             if cursor.rowcount == 1:
                 ret={"status": "OK" }
             else:
@@ -81,17 +81,17 @@ def eliminar_juego(id):
         conexion.close()
         code=200
     except:
-        print("Excepcion al eliminar un juego", file=sys.stdout)
+        print("Excepcion al eliminar una sala de conciertos", file=sys.stdout)
         ret = {"status": "Failure" }
         code=500
     return ret,code
 
 # CRUD : UPDATE
-def actualizar_juego(id, nombre, descripcion, precio, foto):
+def actualizar_sala(id, nombre, descripcion, precio, foto):
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
-            cursor.execute("UPDATE juegos SET nombre = %s, descripcion = %s, precio = %s, foto=%s WHERE id = %s",
+            cursor.execute("UPDATE salas SET nombre = %s, descripcion = %s, precio = %s, foto=%s WHERE id = %s",
                        (nombre, descripcion, precio, foto,id))
             if cursor.rowcount == 1:
                 ret={"status": "OK" }
@@ -101,7 +101,7 @@ def actualizar_juego(id, nombre, descripcion, precio, foto):
         conexion.close()
         code=200
     except:
-        print("Excepcion al eliminar un juego", file=sys.stdout)
+        print("Excepcion al eliminar una sala", file=sys.stdout)
         ret = {"status": "Failure" }
         code=500
     return ret,code
