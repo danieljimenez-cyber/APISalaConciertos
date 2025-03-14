@@ -2,7 +2,7 @@ version: '3'
 services:
   apache:
     image: httpd
-    container_name: apache
+    container_name: apacheb8
     restart: always
     volumes:
       - ./web/static:/usr/local/apache2/htdocs/
