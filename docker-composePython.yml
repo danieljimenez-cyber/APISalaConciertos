@@ -1,32 +1,19 @@
 version: '3'
 services:
-  mariadb:
-    image: mariadb
-    container_name: mariadb
+  apache:
+    image: httpd
+    container_name: apache
     restart: always
-    environment:
-      MARIADB_ROOT_PASSWORD: example
-      MARIADB_USER: agente
-      MARIADB_USER_PASSWORD: 0traClave
-      MARIADB_DATABASE: PEPS
     volumes:
-      - ./mariadb_data:/var/lib/mysql
-      - ./Salas.sql://docker-entrypoint-initdb.d/Salas.sql
-
-    user: mysql
-  phpmyadmin:
-    image: phpmyadmin
-    container_name: phpmyadmin
-    restart: always
-    environment:
-      - PMA_HOST=mariadb
+      - ./web/static:/usr/local/apache2/htdocs/
     ports:
-      - 9093:80
+      - 6108:80
     depends_on:
-      - mariadb
+      - python
+
   python:
     build: .
-    container_name: python
+    container_name: pythonb8
     environment:
       DB_USERNAME: root
       DB_PASSWORD: example
@@ -35,7 +22,34 @@ services:
       DB_PORT: 3306
       PORT: 8080
       HOST: 0.0.0.0
-    ports:
-      - 9094:8080
+    expose:
+      - 8080
     depends_on:
-        - mariadb
+      - mariadb
+
+  mariadb:
+    image: mariadb
+    container_name: mariadbb8
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+      MARIADB_USER: agente
+      MARIADB_USER_PASSWORD: 0traClave
+      MARIADB_DATABASE: PEPS
+    volumes:
+      - ./mariadb_data:/var/lib/mysql
+      - ./Salas.sql:/docker-entrypoint-initdb.d/Salas.sql
+    user: mysql
+    expose:
+      - 3306
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadminb8
+    restart: always
+    environment:
+      - PMA_HOST=mariadb
+    ports:
+      - 7108:80
+    depends_on:
+      - mariadb
