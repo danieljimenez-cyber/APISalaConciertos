@@ -5,7 +5,7 @@ services:
     container_name: apacheb8
     restart: always
     volumes:
-      - ./web/static:/usr/local/apache2/htdocs/
+      - ./web:/usr/local/apache2/htdocs/
     ports:
       - 6108:80
     depends_on:
