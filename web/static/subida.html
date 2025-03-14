@@ -59,7 +59,7 @@
                     .then(response => response.json())
                     .then(result => {
                         if (result.status == "OK"){
-                            location.href="/static/index.html";
+                            location.href="/index.html";
                         } else {
                             alert("No se ha podido cerrar sesión")
                         }
@@ -83,8 +83,8 @@
             </div>
             <div class="navbar-menu">
                 <div class="navbar-start">
-                    <a class="navbar-item" href="/static/salas.html">Salas</a>
-                    <a class="navbar-item" href="/static/subida.html">Archivos</a>
+                    <a class="navbar-item" href="/salas.html">Salas</a>
+                    <a class="navbar-item" href="/subida.html">Archivos</a>
                     <a class="navbar-item" href="javascript:cerrarSesion()">Cerrar sesion</a>
                 </div>
                 <div class="navbar-end">

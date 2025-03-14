@@ -10,8 +10,8 @@ def login():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
         sala_json = request.json
-        username = sala_json['username']
-        password = sala_json['password']
+        username = sanitize_input(sala_json['username'])
+        password = sanitize_input(sala_json['password'])
         try:
             conexion = obtener_conexion()
             with conexion.cursor() as cursor:
