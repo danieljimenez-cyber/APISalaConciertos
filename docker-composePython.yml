@@ -37,7 +37,7 @@ services:
       MARIADB_USER_PASSWORD: 0traClave
       MARIADB_DATABASE: PEPS
     volumes:
-      - ./mariadb_data:/var/lib/mysql
+      -  mariadb_datab8:/var/lib/mysql
       - ./Salas.sql:/docker-entrypoint-initdb.d/Salas.sql
     user: mysql
     expose:
