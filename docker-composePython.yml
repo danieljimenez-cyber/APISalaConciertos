@@ -1,11 +1,11 @@
 version: '3'
 services:
   apache:
-    image: httpd
+    build: ./apache/
     container_name: apacheb8
     restart: always
     volumes:
-      - ./web:/usr/local/apache2/htdocs/
+      - ./apache/static:/var/www/html
     ports:
       - 6108:80
     depends_on:
@@ -38,7 +38,7 @@ services:
       MARIADB_DATABASE: PEPS
     volumes:
       - ./mariadb_data:/var/lib/mysql
-      - ./Salas.sql:/docker-entrypoint-initdb.d/Salas.sql
+      - ./Salas.sql:/docker-entrypoint-initdb.d/setup.sql
     user: mysql
     expose:
       - 3306

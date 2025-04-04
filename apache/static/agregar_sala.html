@@ -9,72 +9,57 @@
         <script>
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-            var queryString = window.location.search;
-            var urlParams = new URLSearchParams(queryString);
-            var id = urlParams.get('id');
-            onload=function(){
-                obtenerDatosSala(id);
+            onload=()=>{
+                if (!sessionStorage.getItem("perfil") || sessionStorage.getItem("perfil")=="normal"){
+                    location.href="salas.html"
+                } else {
+                    if (sessionStorage.getItem("csrf_token")){
+                        myHeaders.append("X-CSRFToken",sessionStorage.getItem("csrf_token"))
+                    }
+                }
             }
-            function obtenerDatosSala(id){
-                var requestOptions = {
-                    method: 'GET'
-                };
-                fetch("/sala/"+id, requestOptions)
-                    .then(response => response.json())
-                    .then(result => pintarsala(result))
-                    .catch(error => {
-                        console.log('error', error)
-                        alert("Ha habido un error al recuperar los datos del sala");
-                        location.href="/salas.html";
-                    });
-            }
-            function pintarSala(sala){
-                document.getElementById("nombre").value=sala.nombre;
-                descripcion=document.getElementById("descripcion").value=sala.descripcion;
-                precio=document.getElementById("precio").value=sala.precio;
-                document.getElementById("foto").value=sala.foto;
-            }
-            function guardar(){            
+
+            function guardar(){
                 let nombre=document.getElementById("nombre").value;
                 let descripcion=document.getElementById("descripcion").value;
                 let precio=document.getElementById("precio").value;
                 let foto=document.getElementById("foto").value;
                 let datos=JSON.stringify({
-                    "id":id,
                     "nombre":nombre,
                     "descripcion":descripcion,
                     "precio": precio,
                     "foto":foto
                 });
                 var requestOptions = {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: myHeaders,
                     body: datos
                 };
-                fetch("/salas", requestOptions)
+                fetch("/api/salas", requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status == "OK"){
-                            alert("Sala modificado")
-                            location.href="/salas.html"
+                            alert("Sala guardada")
+                            location.href="salas.html"
                         } else {
-                            alert("La sala no ha podido ser modificado")
+                            alert("La sala no ha podido ser guardada")
                         }
                     })
                     .catch(error => {
                         console.log('error', error);
-                        alert("Se ha producido un error y la sala no ha podido ser modificado")
+                        alert("Se ha producido un error y la sala no ha podido ser guardado")
                     });
             }
             function cerrarSesion(){
                 var requestOptions = {
-                    method: 'GET'
+                    method: 'GET',
+                    headers: myHeaders
                 };
-                fetch("/logout", requestOptions)
+                fetch("/api/logout", requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status == "OK"){
-                            location.href="/index.html";
+                            location.href="index.html";
                         } else {
                             alert("No se ha podido cerrar sesión")
                         }
@@ -98,8 +83,8 @@
             </div>
             <div class="navbar-menu">
                 <div class="navbar-start">
-                    <a class="navbar-item" href="/salas.html">Salas</a>
-                    <a class="navbar-item" href="/subida.html">Archivos</a>
+                    <a class="navbar-item" href="salas.html">Salas</a>
+                    <a class="navbar-item" href="subida.html">Archivos</a>
                     <a class="navbar-item" href="javascript:cerrarSesion()">Cerrar sesion</a>
                 </div>
                 <div class="navbar-end">
@@ -111,7 +96,7 @@
     <section class="section">
         <div class="columns">
             <div class="column">
-                <h3 class="is-size-3">Editar sala</h3>
+                <h3 class="is-size-3">Agregar sala</h3>
                 <form>
                     <label for="nombre">Nombre:</label>
                     <input required type="text" class="input" placeholder="Nombre" name="nombre" id="nombre">
@@ -120,9 +105,10 @@
                     <label for="precio">Precio</label>
                     <input required type="number" class="input" placeholder="Precio" name="precio" id="precio">
                     <label for="foto">Foto</label>
-                    <input required type="text" class="input" placeholder="Foto" name="foto" id="foto">
+                    <input required type="text" class="input" placeholder="Foto" name="foto" id="foto">                
+                    <input required type="file" class="input" placeholder="Archivo Foto" name="filefoto" id="filefoto">
                     <button type="button" onclick="guardar()" class="button is-success mt-2">Guardar</button>
-                    <a href="/salas.html" class="button is-primary mt-2">Volver</a>
+                    <a href="salas.html" class="button is-primary mt-2">Volver</a>
                 </form>
             </div>
         </div>

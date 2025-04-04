@@ -14,21 +14,26 @@
         <script>
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
+
             function conectar(){
                 document.getElementsByClassName("error")[0].style.display="none";
                 var raw = JSON.stringify({
                     "username": document.getElementById("username").value,
                     "password": document.getElementById("password").value
                 });
+                
                 var requestOptions = {
                     method: 'POST',
                     headers: myHeaders,
                     body: raw
                 };
-                fetch("/login", requestOptions)
+
+                fetch("/api/login", requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status=="OK"){
+                            sessionStorage.setItem("csrf_token",result.csrf_token)
+                            sessionStorage.setItem("perfil",result.perfil)
                             location.href="salas.html";
                         } else {
                             document.getElementsByClassName("error")[0].style.display="block";

@@ -9,15 +9,22 @@
         <script>
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
+            onload=()=>{
+                    if (sessionStorage.getItem("csrf_token")){
+                        myHeaders.append("X-CSRFToken",sessionStorage.getItem("csrf_token"))
+                    }
+            }
+            
             function enviarArchivo(){
                 const formData = new FormData();
                 formData.append('fichero',document.getElementById("fichero").files[0]);
                 formData.append('nombre',document.getElementById("nombre").value);
                 var requestOptions = {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    headers: myHeaders
                 };
-                fetch("/upload", requestOptions)
+                fetch("/api/upload", requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status == "OK"){
@@ -32,18 +39,18 @@
                         alert("Ha habido un error al recuperar el archivo. Refresque la página")
                     });
             }
+
             function verArchivo(){
                 var requestOptions = {
                     method: 'GET',
                 };
-
-                fetch("/ver/" + document.getElementById("nombreArchivo").value, requestOptions)
+                fetch("/api/ver/" + document.getElementById("nombreArchivo").value, requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status == "OK"){
-                            document.getElementById("contenidoArchivo").innerHTML=result.contenido;
+                            document.getElementById("contenidoArchivo").innerText=result.contenido;
                         } else {
-                            document.getElementById("contenidoArchivo").innerHTML="EL CONTENIDO NO ESTA DISPONIBLE";                        
+                            document.getElementById("contenidoArchivo").innerText="EL CONTENIDO NO ESTA DISPONIBLE";                        
                         }
                     })
                     .catch(error => {
@@ -53,13 +60,14 @@
             }
             function cerrarSesion(){
                 var requestOptions = {
-                    method: 'GET'
+                    method: 'GET',
+                    headers: myHeaders
                 };
-                fetch("/logout", requestOptions)
+                fetch("/api/logout", requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status == "OK"){
-                            location.href="/index.html";
+                            location.href="index.html";
                         } else {
                             alert("No se ha podido cerrar sesión")
                         }
@@ -74,8 +82,7 @@
     <body>
         <nav class="navbar is-warning" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <button class="navbar-burger is-warning button" aria-label="menu" aria-expanded="false"
-                    data-target="navbarBasicExample">
+                <button class="navbar-burger is-warning button" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
@@ -83,8 +90,8 @@
             </div>
             <div class="navbar-menu">
                 <div class="navbar-start">
-                    <a class="navbar-item" href="/salas.html">Salas</a>
-                    <a class="navbar-item" href="/subida.html">Archivos</a>
+                    <a class="navbar-item" href="salas.html">Salas</a>
+                    <a class="navbar-item" href="subida.html">Archivos</a>
                     <a class="navbar-item" href="javascript:cerrarSesion()">Cerrar sesion</a>
                 </div>
                 <div class="navbar-end">

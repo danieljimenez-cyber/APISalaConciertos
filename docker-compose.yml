@@ -1,27 +1,77 @@
 version: '3'
-services:
-  mariadb:
-    image: mariadb
-    container_name: mariadb
+services: 
+  python:
+    build: .
+    container_name: pythonb8
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db
+    env_file: .env    
+    environment:
+       DB_PORT: 3306
+       DB_HOST: db
+       DB_DATABASE: PEPS
+       DB_USERNAME: ${DB_USERNAME}
+       DB_PASSWORD: ${DB_PASSWORD}
+       SECRET_KEY: ${SECRET_KEY}
+       WTF_CSRF_SECRET_KEY: ${WTF_CSRF_SECRET_KEY}       
+       HOST: "0.0.0.0"
+       PORT: 8080
+    volumes:
+      - ./logapi/:/app/logs
+
+  db:
+    image: mariadb:10.3
+    container_name: dbb8
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: example
-      MARIADB_USER: agente
-      MARIADB_USER_PASSWORD: 0traClave
-      MARIADB_DATABASE: PEPS
+      MYSQL_DATABASE: PEPS
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
     volumes:
-      - ./mariadb_data:/var/lib/mysql
-      - ./Salas.sql://docker-entrypoint-initdb.d/Salas.sql
-    user: mysql
-    ports:
-      - 3306:3306
+     - dbb8:/var/lib/mysql
+     - ./Salas.sql:/docker-entrypoint-initdb.d/setup.sql
+    secrets:
+      - db_root_password
+
   phpmyadmin:
     image: phpmyadmin
-    container_name: phpmyadmin
+    container_name: phpmyadminb8
     restart: always
-    environment:
-      - PMA_HOST=mariadb
     ports:
-      - 9093:80
+      - 7108:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+    links:
+      - db
     depends_on:
-      - mariadb
+      - db
+  
+  apache-waf:
+    build: ./apache/ #./waf/ en un futuro
+    container_name: apacheb8
+    ports:
+      - 443:443
+      - 6108:80
+    depends_on:
+      - python
+    links:
+      - python
+    volumes:
+      - ./apache/static:/var/www/html # en el futuro se quita
+      - ./logwaf:/var/log/apache2
+secrets:
+  db_root_user:
+    file: ./secretos/db_root_user.txt
+  db_root_password:
+    file: ./secretos/db_root_password.txt
+  db_user_username:
+    file: ./secretos/db_user_username.txt
+  db_user_password:
+    file: ./secretos/db_user_password.txt
+
+volumes:
+  dbb8:    
+

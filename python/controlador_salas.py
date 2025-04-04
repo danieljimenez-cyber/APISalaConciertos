@@ -1,5 +1,6 @@
-from __future__ import print_function
 from bd import obtener_conexion
+from __main__ import app
+from funciones_auxiliares import sanitize_input
 import sys
 
 # CRUD : CREATE
@@ -17,18 +18,18 @@ def insertar_sala(nombre, descripcion, precio,foto):
         conexion.commit()
         conexion.close()
     except:
-        print("Excepcion al insertar una sala de conciertos", file=sys.stdout)
+        app.logger.info("Excepcion al insertar una sala de conciertos")
         ret = {"status": "Failure" }
         code=500
     return ret,code
 
-def convertir_sala_a_json(juego):
+def convertir_sala_a_json(sala):
     d = {}
-    d['id'] = juego[0]
-    d['nombre'] = juego[1]
-    d['descripcion'] = juego[2]
-    d['precio'] = juego[3]
-    d['foto'] = juego[4]
+    d['id'] = sala[0]
+    d['nombre'] = sanitize_input(sala[1])
+    d['descripcion'] = sanitize_input(sala[2])
+    d['precio'] = sala[3]
+    d['foto'] = sanitize_input(sala[4])
     return d
 
 #  CRUD : READ 
@@ -45,7 +46,7 @@ def obtener_salas():
         conexion.close()
         code=200
     except:
-        print("Excepcion al obtener las salas de concierto", file=sys.stdout)
+        app.logger.info("Excepcion al obtener las salas de concierto")
         salasjson=[]
         code=500
     return salasjson,code
@@ -55,15 +56,14 @@ def obtener_sala_por_id(id):
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
-            #cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM salas WHERE id = %s", (id,))
-            cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM salas WHERE id =" + id)
+            cursor.execute("SELECT id, nombre, descripcion, precio,foto FROM salas WHERE id = %s", (id,))
             sala = cursor.fetchone()
             if sala is not None:
                 salajson = convertir_sala_a_json(sala)
         conexion.close()
         code=200
     except:
-        print("Excepcion al recuperar una sala de concierto", file=sys.stdout)
+        app.logger.info("Excepcion al recuperar una sala de concierto")
         code=500
     return salajson,code
 
@@ -81,7 +81,7 @@ def eliminar_sala(id):
         conexion.close()
         code=200
     except:
-        print("Excepcion al eliminar una sala de conciertos", file=sys.stdout)
+        app.logger.info("Excepcion al eliminar una sala de conciertos")
         ret = {"status": "Failure" }
         code=500
     return ret,code
@@ -101,7 +101,7 @@ def actualizar_sala(id, nombre, descripcion, precio, foto):
         conexion.close()
         code=200
     except:
-        print("Excepcion al eliminar una sala", file=sys.stdout)
+        app.logger.info("Excepcion al eliminar una sala")
         ret = {"status": "Failure" }
         code=500
     return ret,code

@@ -6,34 +6,58 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>EJEMPLO APP WEB CON CRUD</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+        <style>
+            .oculto{
+                display: none;
+            }
+        </style>
         <script>
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            if (sessionStorage.getItem("csrf_token")){
+                myHeaders.append("X-CSRFToken",sessionStorage.getItem("csrf_token"))
+            }
+            var perfil="normal";
             onload=function(){
+                if (sessionStorage.getItem("perfil")){
+                    perfil=sessionStorage.getItem("perfil")
+                    if (perfil=="admin"){
+                        document.getElementById("enlaceAgregar").classList.remove("oculto");
+                    }
+                } 
                 pedirSalas();
             }
             function pintarSalas(lista){
                 let tbody=document.getElementsByTagName("tbody")[0];
                 tbody.innerHTML="";
                 lista.forEach(sala => {
-                    tbody.innerHTML+=`<tr>
+                    let texto=`<tr>
                             <td><img src="${sala.foto}" width="70"></td>
                             <td>${sala.nombre}</td>
                             <td>${sala.descripcion}</td>
                             <td>${sala.precio}</td>
-                            <td>
-                                <a href="/editar_sala.html?id=${sala.id}" class="button is-info">Editar</a>
+                            <td>${sala.precio*0.21+sala.precio}</td>
+                            <td>`
+                    if (perfil=="admin"){
+                        texto+=`<a href="editar_sala.html?id=${sala.id}" class="button is-info">Editar</a>
                             </td>
                             <td>
                                 <button class="button is-danger" onclick="eliminarsala(${sala.id})">Eliminar</button>
-                            </td>
-                </tr>`                            
+                            </td>`
+                    } else{
+                        texto+=`<td></td><td></td>`
+                    } 
+                    texto+=`</tr>`;
+                    tbody.innerHTML+=texto                            
                 });
             }
             function pedirSalas(){
                 var requestOptions = {
-                    method: 'GET'
+                    method: 'GET',
+                    headers: myHeaders
                 };
 
-                fetch("/salas", requestOptions)
+                fetch("/api/salas", requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status){
@@ -49,10 +73,11 @@
             }
             function eliminarsala(id){
                 var requestOptions = {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: myHeaders
                 };
 
-                fetch("/salas/"+id, requestOptions)
+                fetch("/api/salas/"+id, requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status == "OK"){
@@ -69,13 +94,14 @@
             }
             function cerrarSesion(){
                 var requestOptions = {
-                    method: 'GET'
+                    method: 'GET',
+                    headers: myHeaders
                 };
-                fetch("/logout", requestOptions)
+                fetch("/api/logout", requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status == "OK"){
-                            location.href="/index.html";
+                            location.href="index.html";
                         } else {
                             alert("No se ha podido cerrar sesión")
                         }
@@ -84,7 +110,6 @@
                         console.log('error', error);
                         alert("Se ha producido un error y no se ha podido cerrar sesión")
                     });
-
             }
         </script>
     </head>
@@ -99,8 +124,8 @@
             </div>
             <div class="navbar-menu">
                 <div class="navbar-start">
-                    <a class="navbar-item" href="/salas.html">Salas</a>
-                    <a class="navbar-item" href="/subida.html">Archivos</a>
+                    <a class="navbar-item" href="salas.html">Salas</a>
+                    <a class="navbar-item" href="subida.html">Archivos</a>
                     <a class="navbar-item" href="javascript:cerrarSesion()">Cerrar sesion</a>
                 </div>
                 <div class="navbar-end">
@@ -113,7 +138,7 @@
             <div class="columns">
                 <div class="column">
                     <h3 class="is-size-3">Salas</h3>
-                    <a href="/agregar_sala.html" class="button is-success">Agregar</a>
+                    <a id="enlaceAgregar" href="agregar_sala.html" class="button is-success oculto">Agregar</a>
                     <table class="table">
                         <thead>
                             <tr>
@@ -121,6 +146,7 @@
                                 <th>Nombre</th>
                                 <th>Descripción</th>
                                 <th>Precio</th>
+                                <th>PrecioIVA</th>
                                 <th>Editar</th>
                                 <th>Eliminar</th>
                             </tr>
