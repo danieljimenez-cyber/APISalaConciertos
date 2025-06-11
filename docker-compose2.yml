@@ -1,0 +1,66 @@
+version: '3'
+services: 
+  python:
+    image: danieljimenez23/pepsapi
+    container_name: pythonb8
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db
+    env_file: .env    
+    environment:
+       DB_PORT: 3306
+       DB_HOST: db
+       DB_DATABASE: PEPS
+       DB_USERNAME: ${DB_USERNAME}
+       DB_PASSWORD: ${DB_PASSWORD}
+       SECRET_KEY: ${SECRET_KEY}
+       WTF_CSRF_SECRET_KEY: ${WTF_CSRF_SECRET_KEY}       
+       HOST: "0.0.0.0"
+       PORT: 8080
+    volumes:
+      - ./logapi/:/app/logs
+
+  db:
+    image: mariadb:10.3
+    container_name: dbb8
+    restart: always
+    environment:
+      MYSQL_DATABASE: PEPS
+      MARIADB_ROOT_PASSWORD_FILE: root
+    volumes:
+     - dbb8:/var/lib/mysql
+     - ./Salas.sql:/docker-entrypoint-initdb.d/setup.sql
+
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadminb8
+    restart: always
+    ports:
+      - 7108:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+    links:
+      - db
+    depends_on:
+      - db
+  
+  apache-waf:
+    image: danieljimenez23/pepsapache
+    container_name: apacheb8
+    ports:
+      - 443:443
+      - 6108:80
+    depends_on:
+      - python
+    links:
+      - python
+    volumes:
+      - ./apache/static:/var/www/html # en el futuro se quita
+      - ./logwaf:/var/log/apache2
+volumes:
+  dbb8:    
+
